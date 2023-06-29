@@ -10,7 +10,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/v1/', include('api.urls', namespace='api'))
 ]
-
+#комментарий
 if settings.DEBUG:
     urlpatterns += static(
         settings.MEDIA_URL,
