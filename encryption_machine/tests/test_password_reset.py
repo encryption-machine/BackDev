@@ -1,4 +1,3 @@
-from django.test import TestCase
 from django.urls import reverse
 from rest_framework.test import APITestCase
 from users.models import User
@@ -17,7 +16,7 @@ class PasswordResetTest(APITestCase):
         cls.url = reverse('api:reset_password-reset-password')
 
     def test_request_from_unauthorized(self):
-        """Availability check for an authorized user.
+        """Availability check for an unauthorized user.
 
         Post request to endpoint api/v1/users/reset_password available for
         unauthorized user.
