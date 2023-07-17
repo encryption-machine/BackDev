@@ -1,8 +1,11 @@
 from django.db import models
 from users.models import User
-
-from .encryption_algorithms import (aes, caesar_code, morse_code, qr_code,
-                                    vigenere)
+from . import services
+from .validations import (validate_key_caesar, validate_text_caesar,
+                          validate_text_morse, validat_qr_vig_aes_text,
+                          validat_vig_aes_text_decrypt, validat_key_aes,
+                          validate_text_morse_decrypt,
+                          validat_key_vigenere)
 
 
 class Encryption(models.Model):
@@ -21,31 +24,73 @@ class Encryption(models.Model):
         verbose_name_plural = "Шифрования"
 
     def encrypt_aes(self, text, key):
-        return aes.encrypt(text, key)
+        try:
+            validat_qr_vig_aes_text(text)
+            validat_key_aes(key)
+            return services.aes_encrypt(text, key)
+        except ValueError:
+            print('Неправильный ключ или текст')
 
     def decrypt_aes(self, text, key):
-        return aes.decrypt(text, key)
+        try:
+            validat_vig_aes_text_decrypt(text)
+            validat_key_aes(key)
+            return services.aes_decrypt(text, key)
+        except ValueError:
+            print('Неправильный ключ или текст')
 
     def encrypt_caesar(self, text, key):
-        return caesar_code.encryption_mixin(text, key, is_encryption=True)
+        try:
+            validate_text_caesar(text)
+            validate_key_caesar(key)
+            return services.encryption_mixin(text, key, is_encryption=True)
+        except ValueError:
+            print('Неправильный ключ или текст')
 
     def decrypt_caesar(self, text, key):
-        return caesar_code.encryption_mixin(text, key, is_encryption=False)
+        try:
+            validate_text_caesar(text)
+            validate_key_caesar(key)
+            return services.encryption_mixin(text, key, is_encryption=False)
+        except ValueError:
+            print('Неправильный ключ или текст')
 
     def encrypt_morse(self, text, *args):
-        return morse_code.encode(text)
+        try:
+            validate_text_morse(text)
+            return services.morse_encode(text)
+        except ValueError:
+            print('Неправильный ключ или текст')
 
     def decrypt_morse(self, text, *args):
-        return morse_code.decode(text)
+        try:
+            validate_text_morse_decrypt(text)
+            return services.morse_decode(text)
+        except ValueError:
+            print('Неправильный ключ или текст')
 
     def encrypt_qr(self, text, *args):
-        return qr_code.qr_code_generation(text)
+        try:
+            validat_qr_vig_aes_text(text)
+            return services.qr_code_generation(text)
+        except ValueError:
+            print('Неправильный ключ или текст')
 
     def encrypt_vigenere(self, text, key):
-        return vigenere.encode(text, key)
+        try:
+            validat_qr_vig_aes_text(text)
+            validat_key_vigenere(key)
+            return services.vigenere_encode(text, key)
+        except ValueError:
+            print('Неправильный ключ или текст')
 
     def decrypt_vigenere(self, text, key):
-        return vigenere.decode(text, key)
+        try:
+            validat_vig_aes_text_decrypt(text)
+            validat_key_vigenere(key)
+            return services.vigenere_decode(text, key)
+        except ValueError:
+            print('Неправильный ключ или текст')
 
     def get_algorithm(self):
         encription_dict = {
