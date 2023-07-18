@@ -19,6 +19,7 @@ from .serializers import (EncryptionReadSerializer, EncryptionSerializer,
 @swagger_auto_schema(
     methods=['POST'],
     request_body=ResetPasswordWriteSerializer,
+   description='Запрос на восстановление пароля',
     responses={
         status.HTTP_200_OK: ResetPasswordReadSerializer,
         status.HTTP_400_BAD_REQUEST: openapi.Schema(

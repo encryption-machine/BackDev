@@ -106,7 +106,7 @@ class EncryptionReadSerializer(serializers.ModelSerializer):
     class Meta:
         model = Encryption
         fields = (
-            'text', 'algorithm', 'key', 'is_encryption', 'encrypted_text')
+            'text', 'algorithm', 'key', 'is_encryption', 'encrypted_text', 'data')
 
     def get_encrypted_text(self, obj):
         return obj.get_algorithm()
