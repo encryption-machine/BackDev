@@ -2,6 +2,7 @@ from secrets import token_hex
 
 from django.contrib.auth.password_validation import validate_password
 from encryption.models import Encryption
+from encryption.services import EncryptionService
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from users.models import User
@@ -123,7 +124,7 @@ class ResetPasswordConfirmSerializer(serializers.ModelSerializer):
 
 class EncryptionReadSerializer(serializers.ModelSerializer):
     """Сериализатор для запроса к истории шифрований."""
-
+    encrypt_service = EncryptionService()
     encrypted_text = serializers.SerializerMethodField()
 
     class Meta:
@@ -131,12 +132,18 @@ class EncryptionReadSerializer(serializers.ModelSerializer):
         fields = (
             "text", "algorithm", "key", "is_encryption", "encrypted_text")
 
-    def get_encrypted_text(self, obj):
-        return obj.get_algorithm()
+    def get_encrypted_text(self):
+        key = self.key
+        text = self.text
+        is_encryption = self.is_encryption
+        encrypted_text = self.encrypt_service.get_algorithm(
+            text, key, is_encryption)
+        return encrypted_text
 
 
 class EncryptionSerializer(serializers.ModelSerializer):
     """Сериалайзер для вывода результата шфирования"""
+    encrypt_service = EncryptionService()
 
     class Meta:
         model = Encryption
@@ -157,8 +164,10 @@ class EncryptionSerializer(serializers.ModelSerializer):
             encryption = Encryption.objects.create(**validated_data)
         return encryption
 
-    def to_representation(self, instance):
-        obj = super().to_representation(instance)
-        obj_1 = Encryption.objects.get(id=obj["id"])
-        encrypted_text = obj_1.get_algorithm()
+    def to_representation(self):
+        key = self.key
+        text = self.text
+        is_encryption = self.is_encryption
+        encrypted_text = self.encrypt_service.get_algorithm(
+            text, key, is_encryption)
         return {"encrypted_text": encrypted_text}
