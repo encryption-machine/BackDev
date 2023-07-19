@@ -5,6 +5,7 @@ from encryption.models import Encryption
 from rest_framework.test import APITestCase
 from users.models import User
 
+
 class EncryptionHistoryTest(APITestCase):
     @classmethod
     def setUpClass(cls):
