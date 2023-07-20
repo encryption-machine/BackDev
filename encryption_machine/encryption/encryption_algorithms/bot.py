@@ -6,6 +6,7 @@ from aiogram.dispatcher import FSMContext
 import caesar_code, morse_code, vigenere, qr_code, aes
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
+
 logging.basicConfig(level=logging.INFO)
 
 
@@ -30,7 +31,7 @@ async def start(message: types.Message):
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
     keyboard.add(*['Цезарь', 'Виженер', 'QR-Code', 'Азбука Морзе', 'AES'])
     await message.reply("Я бот проекта Шифровальная машина")
-    await message.reply('Выберите шифр:', reply_markup=keyboard)
+    await message.answer('Выберите шифр:', reply_markup=keyboard)
 
 # Обработчик выбора шифра
 @dp.message_handler(lambda message: message.text in ['Цезарь', 'Виженер', 'QR-Code', 'Азбука Морзе', 'AES'])
@@ -77,21 +78,30 @@ async def process_text(message: types.Message, state: FSMContext):
 
 
     # Получение функции шифрования или дешифрования из словаря и вызов функции
-    cipher_functions_dict = cipher_functions.get(cipher)
     if cipher == 'QR-Code':
-        result = cipher_functions_dict(text)
-        await message.reply(result)
+        try:
+            cipher_functions_dict = cipher_functions.get(cipher)
+            result = cipher_functions_dict(text)
+            await message.reply(result)
+        except:
+            await state.finish()
+            await message.answer('Бот упал. Ауч. Для нового шифрования нажмите /start')
         await state.finish()
-        await message.reply('Для нового шифрования введите /start')
+        await message.answer('Для нового шифрования нажмите /start')
     elif cipher == 'Азбука Морзе':
-        cipher_function = cipher_functions_dict.get(mode)
-        result = cipher_function(text)
-        await message.reply(result)
-        await state.finish()
-        await message.reply('Для нового шифрования введите /start')
+        try:
+            cipher_functions_dict = cipher_functions.get(cipher)
+            cipher_function = cipher_functions_dict.get(mode)
+            result = cipher_function(text)
+            await message.reply(result)
+            await state.finish()
+            await message.answer('Для нового шифрования нажмите /start')
+        except:
+            await state.finish()
+            await message.answer('Бот упал. Ауч. Для нового шифрования нажмите /start')
     else:
         await state.set_state('input_key')
-        await message.reply('Введите ключ:')
+        await message.reply('Введите ключ')
 
 
 # Обработчик ввода ключа
@@ -106,24 +116,36 @@ async def input_key(message: types.Message, state: FSMContext):
     text = data.get('text')
 
     # Получение функции шифрования или дешифрования из словаря и вызов функции с текстом и ключом
-    cipher_functions_dict = cipher_functions.get(cipher)
 
-    cipher_function = cipher_functions_dict.get(mode)
     if cipher == 'Цезарь':
         if data.get('mode') == 'encrypt':
             is_encryption = True
         else:
             is_encryption = False
-        result = cipher_function(text, key, is_encryption)
-        await message.reply(result)
-        await state.finish()
-        await message.reply('Для нового шифрования введите /start')
+        try:
+            cipher_functions_dict = cipher_functions.get(cipher)
+            cipher_function = cipher_functions_dict.get(mode)
+            key = int(key)
+            result = cipher_function(text, key, is_encryption)
+            await message.reply(result)
+            await state.finish()
+            await message.answer('Для нового шифрования нажмите /start')
+        except:
+            await state.finish()
+            await message.answer('Бот упал. Ауч. Для нового шифрования нажмите /start')
     else:
-        result = cipher_function(text, key)
-        await message.reply(result)
-        await state.finish()
-        await message.reply('Для нового шифрования введите /start')
+        try:
+            cipher_functions_dict = cipher_functions.get(cipher)
+            cipher_function = cipher_functions_dict.get(mode)
+            result = cipher_function(text, key)
+            await message.reply(result)
+            await state.finish()
+            await message.answer('Для нового шифрования нажмите /start')
+        except:
+            await state.finish()
+            await message.answer('Бот упал. Ауч. Для нового шифрования нажмите /start')
 
 
 if __name__ == '__main__':
+    
     executor.start_polling(dp, skip_updates=True)
