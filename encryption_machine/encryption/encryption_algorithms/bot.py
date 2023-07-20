@@ -39,9 +39,11 @@ async def choose_cipher(message: types.Message, state: FSMContext):
     cipher = message.text
     keyboard = types.InlineKeyboardMarkup(row_width=2)
     if cipher == 'QR-Code':
+        logging.basicConfig(level=logging.INFO)
         await message.reply('Введите текст для шифрования:')
         await state.update_data(cipher=cipher)
         await state.set_state('input_text')
+        
     else:
         keyboard = types.InlineKeyboardMarkup(row_width=2)
         keyboard.add(
@@ -78,17 +80,7 @@ async def process_text(message: types.Message, state: FSMContext):
 
 
     # Получение функции шифрования или дешифрования из словаря и вызов функции
-    if cipher == 'QR-Code':
-        try:
-            cipher_functions_dict = cipher_functions.get(cipher)
-            result = cipher_functions_dict(text)
-            await message.reply(result)
-        except:
-            await state.finish()
-            await message.answer('Бот упал. Ауч. Для нового шифрования нажмите /start')
-        await state.finish()
-        await message.answer('Для нового шифрования нажмите /start')
-    elif cipher == 'Азбука Морзе':
+    if cipher == 'Азбука Морзе':
         try:
             cipher_functions_dict = cipher_functions.get(cipher)
             cipher_function = cipher_functions_dict.get(mode)
