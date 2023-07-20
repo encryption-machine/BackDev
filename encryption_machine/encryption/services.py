@@ -1,12 +1,8 @@
-from django.db import models
 from .utils import (aes, caesar_code, morse_code, qr_code,
                     vigenere)
+from django.core.exceptions import ValidationError
 
-from .validations import (validate_key_caesar, validate_text_caesar_morse,
-                          validat_qr_vig_aes_text, validat_key_aes,
-                          validat_vig_aes_text_decrypt,
-                          validate_text_morse_decrypt,
-                          validat_key_vigenere)
+from .validators import validate_aes, validate_caesar, validate_morse, validate_qr, validate_vigenere
 
 
 class EncryptionService:
@@ -39,7 +35,7 @@ class EncryptionService:
     def decrypt_vigenere(self, text, key):
         return vigenere.decode(text, key)
 
-    def get_algorithm(self, text, key, is_encryption):
+    def get_algorithm(self, algorithm, text, key, is_encryption):
         encription_dict = {
             "aes": self.encrypt_aes,
             "caesar": self.encrypt_caesar,
@@ -54,70 +50,22 @@ class EncryptionService:
             "morse": self.decrypt_morse,
             "vigenere": self.decrypt_vigenere,
         }
+        
         if is_encryption:
-            return encription_dict[self.algorithm](text, key)
+            return encription_dict[algorithm](text, key)
         else:
-            return decription_dict[self.algorithm](text, key)
+            return decription_dict[algorithm](text, key)
 
-    def get_validations(self, key, text, is_encryption, algorithm):
-        encription_dict = {
-            "aes": self.encrypt_aes,
-            "caesar": self.encrypt_caesar,
-            "morse": self.encrypt_morse,
-            "qr": self.encrypt_qr,
-            "vigenere": self.encrypt_vigenere,
+    def get_validator(self, algorithm, text, key, is_encryption):
+        validation_dict = {
+            "aes": validate_aes,
+            "caesar": validate_caesar,
+            "morse": validate_morse,
+            "qr": validate_qr,
+            "vigenere": validate_vigenere,
         }
+        try:
+            validation_dict[algorithm](text, key, is_encryption)
+        except ValidationError:
+            raise
 
-        decription_dict = {
-            "aes": self.decrypt_aes,
-            "caesar": self.decrypt_caesar,
-            "morse": self.decrypt_morse,
-            "vigenere": self.decrypt_vigenere,
-        }
-        if is_encryption:
-            if algorithm == encription_dict['aes']:
-                if encription_dict['aes'](keyvalidat_qr_vig_aes_text(text), validat_key_aes(key)):
-                    return True
-                else:
-                    return False
-            if algorithm == encription_dict['caesar']:
-                if encription_dict['caesar'](validate_text_caesar(text), validate_key_caesar(key)):
-                    return True
-                else:
-                    return False
-            if algorithm == encription_dict['morse']:
-                if encription_dict['morse'](validate_text_morse(text)):
-                    return True
-                else:
-                    return False
-            if algorithm == encription_dict['qr']:
-                if algorithm == encription_dict['qr'](validat_qr_vig_aes_text(text)):
-                    return True
-                else:
-                    return False
-            if algorithm == encription_dict['vigenere']:
-                if encription_dict['vigenere'](validat_qr_vig_aes_text(text), validat_key_vigenere(key)):
-                    return True
-                else:
-                    return False
-        else:
-            if algorithm == decription_dict['aes']:
-                if decription_dict['aes'](validat_vig_aes_text_decrypt(text), validat_key_aes(key)):
-                    return True
-                else:
-                    return False
-            if algorithm == decription_dict['caesar']:
-                if decription_dict['caesar'](validate_text_caesar(text), validate_key_caesar(key)):
-                                        return True
-                else:
-                    return False
-            if algorithm == decription_dict['morse']:
-                if decription_dict['morse'](validate_text_morse_decrypt(text)):
-                    return True
-                else:
-                    return False
-            if algorithm == decription_dict['vigenere']:
-                if decription_dict['vigenere'](validat_vig_aes_text_decrypt(text), validat_key_vigenere(key)):
-                    return True
-                else:
-                    return False
