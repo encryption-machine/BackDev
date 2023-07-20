@@ -38,22 +38,11 @@ def validate_key_caesar(value):
     return value
 
 
-def validate_text_caesar(value):
-    ''' Валидация ввода текста для шифра Цезаря '''
+def validate_text_caesar_morse(value):
+    ''' Валидация ввода текста для шифра Цезаря и Морзе'''
     if len(value) > 2000:
         raise ValidationError('Слишком большой текст')
     if value not in list_value_caesar:
-        raise ValidationError(f'Вы ввели недопустимый символ {value}')
-    if value == '':
-        raise ValidationError('Вы не ввели ни одного символа.')
-    return value
-
-
-def validate_text_morse(value):
-    ''' Валидация шифра морзе '''
-    if len(value) > 2000:
-        raise ValidationError('Слишком большой текст')
-    if value not in list_value_morse:
         raise ValidationError(f'Вы ввели недопустимый символ {value}')
     if value == '':
         raise ValidationError('Вы не ввели ни одного символа.')

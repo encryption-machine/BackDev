@@ -124,8 +124,8 @@ class ResetPasswordConfirmSerializer(serializers.ModelSerializer):
 
 class EncryptionReadSerializer(serializers.ModelSerializer):
     """Сериализатор для запроса к истории шифрований."""
-    encrypt_service = EncryptionService()
     encrypted_text = serializers.SerializerMethodField()
+    encrypt_service = EncryptionService()
 
     class Meta:
         model = Encryption
@@ -143,18 +143,29 @@ class EncryptionReadSerializer(serializers.ModelSerializer):
 
 class EncryptionSerializer(serializers.ModelSerializer):
     """Сериалайзер для вывода результата шфирования"""
+    
     encrypt_service = EncryptionService()
 
     class Meta:
         model = Encryption
-        fields = ("id", "text", "algorithm", "key", "is_encryption", "user")
+        fields = ("id", "text", "algorithm", "key", "is_encryption")
 
     def validate_algorithm(self, value):
         if value not in ("aes", "caesar", "morse", "qr", "vigenere"):
             raise serializers.ValidationError(
                 "Шифр содержит неправильное название")
-
         return value
+
+    def validate(self, data):
+
+        text = data['text']
+        key = data['key']
+        is_encryption = data['is_encryption']
+        algorithm = data['algorithm']
+        if self.encrypt_service.get_validations(text, key, is_encryption, algorithm) == False:
+            raise serializers.ValidationError(
+                "Вы ввели неверный текст или ключ")
+        return data
 
     def create(self, validated_data):
         user = self.context.get("request").user
@@ -164,10 +175,10 @@ class EncryptionSerializer(serializers.ModelSerializer):
             encryption = Encryption.objects.create(**validated_data)
         return encryption
 
-    def to_representation(self):
-        key = self.key
-        text = self.text
-        is_encryption = self.is_encryption
+    def to_representation(self, instance):
+        key = key
+        text = text
+        is_encryption = is_encryption
         encrypted_text = self.encrypt_service.get_algorithm(
             text, key, is_encryption)
         return {"encrypted_text": encrypted_text}
