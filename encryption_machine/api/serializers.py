@@ -126,7 +126,7 @@ class ResetPasswordConfirmSerializer(serializers.ModelSerializer):
 class EncryptionReadSerializer(serializers.ModelSerializer):
     """Сериализатор для запроса к истории шифрований."""
     encrypted_text = serializers.SerializerMethodField()
-    encrypt_service = EncryptionService()
+    encryption_service = EncryptionService()
 
     class Meta:
         model = Encryption
@@ -134,12 +134,9 @@ class EncryptionReadSerializer(serializers.ModelSerializer):
             "text", "algorithm", "key",
             "is_encryption", "encrypted_text", 'date')
 
-    def get_encrypted_text(self):
-        key = self.key
-        text = self.text
-        is_encryption = self.is_encryption
-        encrypted_text = self.encrypt_service.get_algorithm(
-            text, key, is_encryption)
+    def get_encrypted_text(self, obj):
+        encrypted_text = self.encryption_service.get_algorithm(
+            obj.algorithm, obj.text, obj.key, obj.is_encryption)
         return encrypted_text
 
 
