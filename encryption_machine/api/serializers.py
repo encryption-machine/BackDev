@@ -2,9 +2,11 @@ from secrets import token_hex
 
 from django.contrib.auth.password_validation import validate_password
 from encryption.models import Encryption
+from encryption.services import EncryptionService
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from users.models import User
+from django.core.exceptions import ValidationError
 
 
 class CustomJWTCreateSerializer(TokenObtainPairSerializer):
@@ -123,8 +125,8 @@ class ResetPasswordConfirmSerializer(serializers.ModelSerializer):
 
 class EncryptionReadSerializer(serializers.ModelSerializer):
     """Сериализатор для запроса к истории шифрований."""
-
     encrypted_text = serializers.SerializerMethodField()
+    encryption_service = EncryptionService()
 
     class Meta:
         model = Encryption
@@ -133,33 +135,43 @@ class EncryptionReadSerializer(serializers.ModelSerializer):
             "is_encryption", "encrypted_text", 'date')
 
     def get_encrypted_text(self, obj):
-        return obj.get_algorithm()
+        encrypted_text = self.encryption_service.get_algorithm(
+            obj.algorithm, obj.text, obj.key, obj.is_encryption)
+        return encrypted_text
 
 
 class EncryptionSerializer(serializers.ModelSerializer):
     """Сериалайзер для вывода результата шфирования"""
+    
+    encryption_service = EncryptionService()
 
     class Meta:
         model = Encryption
-        fields = ("id", "text", "algorithm", "key", "is_encryption", "user")
+        fields = ("id", "text", "algorithm", "key", "is_encryption")
 
     def validate_algorithm(self, value):
         if value not in ("aes", "caesar", "morse", "qr", "vigenere"):
             raise serializers.ValidationError(
                 "Шифр содержит неправильное название")
-
         return value
 
-    def create(self, validated_data):
-        user = self.context.get("request").user
-        if user.is_authenticated:
-            encryption = Encryption.objects.create(user=user, **validated_data)
-        else:
-            encryption = Encryption.objects.create(**validated_data)
-        return encryption
+    def validate(self, data):
+        text = data['text']
+        key = data['key']
+        is_encryption = data['is_encryption']
+        algorithm = data['algorithm']
+        try:
+            self.encryption_service.get_validator(algorithm, text, key, is_encryption)
+        except ValidationError as error:
+            raise serializers.ValidationError(error.message)
+        return data 
 
     def to_representation(self, instance):
-        obj = super().to_representation(instance)
-        obj_1 = Encryption.objects.get(id=obj["id"])
-        encrypted_text = obj_1.get_algorithm()
+        algorithm = self.context.get("request").data['algorithm']
+        text = self.context.get("request").data['text']
+        key = self.context.get("request").data['key']
+        is_encryption = self.context.get("request").data['is_encryption']
+        
+        encrypted_text = self.encryption_service.get_algorithm(
+            algorithm, text, key, is_encryption)
         return {"encrypted_text": encrypted_text}
