@@ -25,7 +25,7 @@ class UserCreateSerializer(DjoserUserCreateSerializer):
 
 
 class CustomJWTCreateSerializer(TokenObtainPairSerializer):
-    """Кастомный сериализатор для создания jwt токена.
+    """Кастомный сериализатор                          для создания jwt токена.
 
     Переопределяет текст ответа при ошибке."""
 

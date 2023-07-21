@@ -125,5 +125,4 @@ class EncryptionViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         user = self.request.user
         if user.is_authenticated:
-            encryption = Encryption.objects.create(user=user, **serializer.validated_data)
-
+            Encryption.objects.create(user=user, **serializer.validated_data)

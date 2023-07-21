@@ -1,8 +1,8 @@
-from .utils import (aes, caesar_code, morse_code, qr_code,
-                    vigenere)
 from django.core.exceptions import ValidationError
 
-from .validators import validate_aes, validate_caesar, validate_morse, validate_qr, validate_vigenere
+from .utils import aes, caesar_code, morse_code, qr_code, vigenere
+from .validators import (validate_aes, validate_caesar, validate_morse,
+                         validate_qr, validate_vigenere)
 
 
 class EncryptionService:
@@ -50,7 +50,7 @@ class EncryptionService:
             "morse": self.decrypt_morse,
             "vigenere": self.decrypt_vigenere,
         }
-        
+
         if is_encryption:
             return encription_dict[algorithm](text, key)
         else:
@@ -68,4 +68,3 @@ class EncryptionService:
             validation_dict[algorithm](text, key, is_encryption)
         except ValidationError:
             raise
-

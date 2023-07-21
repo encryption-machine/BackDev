@@ -71,7 +71,8 @@ def encode(text):
     splited_text = [[i for i in word] for word in text.split()]
     return "  ".join(
         [
-            " ".join([MORSE_DICT.get(letter.upper(), letter) for letter in word])
+            " ".join(
+                [MORSE_DICT.get(letter.upper(), letter) for letter in word])
             for word in splited_text
         ]
     )
