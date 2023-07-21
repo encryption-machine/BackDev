@@ -24,12 +24,12 @@ class EncryptionTest(APITestCase):
             "algorithm": "morse",
             "key": "string",
             "is_encryption": True,
-            "user": self.user.id
+
         }
 
         response = self.client.post(self.url, data, format="json")
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        # self.assertEqual(Encryption.objects.count(),0)
+        self.assertEqual(Encryption.objects.count(), 0)
 
     def test_encryption_with_invalid_algorithms(self):
         """Test not valid algorithm"""
@@ -38,7 +38,7 @@ class EncryptionTest(APITestCase):
             "algorithm": "invalid_algorithms",
             "key": "string",
             "is_encryption": True,
-            "user": self.user.id
+
         }
 
         response = self.client.post(self.url, data, format="json")
@@ -52,33 +52,25 @@ class EncryptionTest(APITestCase):
     def test_encryption_with_invalid_key(self):
         """Test not valid key"""
         data = {
-            "text": "string",
-            "algorithm": "invalid_algorithms",
-            "key": "",
+            "text": "строка",
+            "algorithm": "caesar",
+            "key": "2a",
             "is_encryption": True,
-            "user": self.user.id
+
         }
         response = self.client.post(self.url, data, format="json")
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertIn("key", response.data)
-        self.assertEqual(
-            response.data["key"][0],
-            'Это поле не может быть пустым.'
-        )
 
     def test_encryption_with_invalid_user(self):
-        """Test  auth user created in the database"""
+        """Test  creating a database entry"""
         data = {
             "text": "string",
             "algorithm": "morse",
             "key": "valid_key",
             "is_encryption": True,
-            "user": self.user.id
+
         }
-        self.client.force_authenticate()
+        self.client.force_authenticate(EncryptionTest.user)
         response = self.client.post(self.url, data, format="json")
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(Encryption.objects.count(), 1)
-
-
-
