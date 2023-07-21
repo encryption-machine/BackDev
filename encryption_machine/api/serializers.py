@@ -2,26 +2,20 @@ from secrets import token_hex
 
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
-from djoser.serializers import \
-    UserCreatePasswordRetypeSerializer as DjoserUserCreateSerializer
+from djoser.serializers import UserCreatePasswordRetypeSerializer
 from encryption.models import Encryption
 from encryption.services import EncryptionService
 from rest_framework import serializers
-from rest_framework.fields import empty
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
 from users.models import User
 
 
-class UserCreateSerializer(DjoserUserCreateSerializer):
-
+class UserCreateSerializer(UserCreatePasswordRetypeSerializer):
     def to_representation(self, instance):
         token_class = RefreshToken
         refresh = token_class.for_user(instance)
-        return {
-            'refresh': str(refresh),
-            'access': str(refresh.access_token)
-        }
+        return {"refresh": str(refresh), "access": str(refresh.access_token)}
 
 
 class CustomJWTCreateSerializer(TokenObtainPairSerializer):
@@ -140,6 +134,7 @@ class ResetPasswordConfirmSerializer(serializers.ModelSerializer):
 
 class EncryptionReadSerializer(serializers.ModelSerializer):
     """Сериализатор для запроса к истории шифрований."""
+
     encrypted_text = serializers.SerializerMethodField()
     encryption_service = EncryptionService()
 
@@ -147,11 +142,13 @@ class EncryptionReadSerializer(serializers.ModelSerializer):
         model = Encryption
         fields = (
             "text", "algorithm", "key",
-            "is_encryption", "encrypted_text", 'date')
+            "is_encryption", "encrypted_text", "date"
+        )
 
     def get_encrypted_text(self, obj):
         encrypted_text = self.encryption_service.get_algorithm(
-            obj.algorithm, obj.text, obj.key, obj.is_encryption)
+            obj.algorithm, obj.text, obj.key, obj.is_encryption
+        )
         return encrypted_text
 
 
@@ -171,10 +168,10 @@ class EncryptionSerializer(serializers.ModelSerializer):
         return value
 
     def validate(self, data):
-        text = data['text']
-        key = data['key']
-        is_encryption = data['is_encryption']
-        algorithm = data['algorithm']
+        text = data["text"]
+        key = data["key"]
+        is_encryption = data["is_encryption"]
+        algorithm = data["algorithm"]
         try:
             self.encryption_service.get_validator(
                 algorithm, text, key, is_encryption)
@@ -183,11 +180,12 @@ class EncryptionSerializer(serializers.ModelSerializer):
         return data
 
     def to_representation(self, instance):
-        algorithm = self.context.get("request").data['algorithm']
-        text = self.context.get("request").data['text']
-        key = self.context.get("request").data['key']
-        is_encryption = self.context.get("request").data['is_encryption']
+        algorithm = self.context.get("request").data["algorithm"]
+        text = self.context.get("request").data["text"]
+        key = self.context.get("request").data["key"]
+        is_encryption = self.context.get("request").data["is_encryption"]
 
         encrypted_text = self.encryption_service.get_algorithm(
-            algorithm, text, key, is_encryption)
+            algorithm, text, key, is_encryption
+        )
         return {"encrypted_text": encrypted_text}
