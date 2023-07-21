@@ -1,7 +1,8 @@
 from datetime import datetime
+
 from django.urls import reverse
-from encryption.encryption_algorithms.morse_code import encode
 from encryption.models import Encryption
+from encryption.utils.morse_code import encode
 from rest_framework.test import APITestCase
 from users.models import User
 
