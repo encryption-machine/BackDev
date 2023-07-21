@@ -121,3 +121,9 @@ class EncryptionViewSet(viewsets.ModelViewSet):
     queryset = Encryption.objects.all()
     serializer_class = EncryptionSerializer
     http_method_names = ["post"]
+
+    def perform_create(self, serializer):
+        user = self.request.user
+        if user.is_authenticated:
+            encryption = Encryption.objects.create(user=user, **serializer.validated_data)
+

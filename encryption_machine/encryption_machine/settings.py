@@ -24,8 +24,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-# SECRET_KEY = 'django-insecure-v5wnldpxhh-r1hkka$t7l2gg+ktft)w)l==c7_vxi+5(fd+xw)'
-SECRET_KEY = os.getenv("DJANGO_KEY", get_random_secret_key())
+SECRET_KEY = 'django-insecure-v5wnldpxhh-r1hkka$t7l2gg+ktft)w)l==c7_vxi+5(fd+xw)'
+# SECRET_KEY = os.getenv("DJANGO_KEY", get_random_secret_key())
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -166,6 +166,9 @@ SIMPLE_JWT = {
 }
 
 DJOSER = {
+    'SERIALIZERS': {
+        'user_create_password_retype': 'api.serializers.UserCreateSerializer',
+    },
     "LOGIN_FIELD": "email",
     "USER_CREATE_PASSWORD_RETYPE": True,
     "PASSWORD_RESET_CONFIRM_RETYPE": True,

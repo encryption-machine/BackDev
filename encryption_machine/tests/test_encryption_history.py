@@ -1,5 +1,6 @@
+from datetime import datetime
 from django.urls import reverse
-from encryption.encryption_algorithms.morse_code import encode
+from encryption.utils.morse_code import encode
 from encryption.models import Encryption
 from rest_framework.test import APITestCase
 from users.models import User
@@ -68,7 +69,10 @@ class EncryptionHistoryTest(APITestCase):
             'algorithm': 'morse',
             'key': None,
             'is_encryption': True,
-            'encrypted_text': encode('тестовый текст')
+            'encrypted_text': encode('тестовый текст'),
+            'date': datetime.strftime(
+                EncryptionHistoryTest.encryption.date, '%Y-%m-%dT%H:%M:%S.%fZ'
+            )
         }
 
         for field, value in correct_data.items():
