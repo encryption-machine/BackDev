@@ -39,9 +39,8 @@ def validate_caesar(text, key, is_encryption):
         raise ValidationError('Вы не ввели ни одного символа.')
     if key.isdigit() is False:
         raise ValidationError(f'{key} не является числом.')
-    else:
-        if int(key) > 15:
-            raise ValidationError('Слишком большой ключ')
+    if int(key) > 15:
+        raise ValidationError('Слишком большой ключ')
     if key == '':
         raise ValidationError('Вы не ввели ни одного символа.')
 
