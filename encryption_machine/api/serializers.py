@@ -1,12 +1,27 @@
 from secrets import token_hex
 
 from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
+from djoser.serializers import \
+    UserCreatePasswordRetypeSerializer as DjoserUserCreateSerializer
 from encryption.models import Encryption
 from encryption.services import EncryptionService
 from rest_framework import serializers
+from rest_framework.fields import empty
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from rest_framework_simplejwt.tokens import RefreshToken
 from users.models import User
-from django.core.exceptions import ValidationError
+
+
+class UserCreateSerializer(DjoserUserCreateSerializer):
+
+    def to_representation(self, instance):
+        token_class = RefreshToken
+        refresh = token_class.for_user(instance)
+        return {
+            'refresh': str(refresh),
+            'access': str(refresh.access_token)
+        }
 
 
 class CustomJWTCreateSerializer(TokenObtainPairSerializer):
@@ -142,7 +157,7 @@ class EncryptionReadSerializer(serializers.ModelSerializer):
 
 class EncryptionSerializer(serializers.ModelSerializer):
     """Сериалайзер для вывода результата шфирования"""
-    
+
     encryption_service = EncryptionService()
 
     class Meta:
@@ -161,17 +176,18 @@ class EncryptionSerializer(serializers.ModelSerializer):
         is_encryption = data['is_encryption']
         algorithm = data['algorithm']
         try:
-            self.encryption_service.get_validator(algorithm, text, key, is_encryption)
+            self.encryption_service.get_validator(
+                algorithm, text, key, is_encryption)
         except ValidationError as error:
             raise serializers.ValidationError(error.message)
-        return data 
+        return data
 
     def to_representation(self, instance):
         algorithm = self.context.get("request").data['algorithm']
         text = self.context.get("request").data['text']
         key = self.context.get("request").data['key']
         is_encryption = self.context.get("request").data['is_encryption']
-        
+
         encrypted_text = self.encryption_service.get_algorithm(
             algorithm, text, key, is_encryption)
         return {"encrypted_text": encrypted_text}
