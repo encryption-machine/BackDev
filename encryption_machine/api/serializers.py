@@ -19,7 +19,7 @@ class UserCreateSerializer(UserCreatePasswordRetypeSerializer):
 
 
 class CustomJWTCreateSerializer(TokenObtainPairSerializer):
-    """Кастомный сериализатор                          для создания jwt токена.
+    """Кастомный сериализатор для создания jwt токена.
 
     Переопределяет текст ответа при ошибке."""
 
@@ -169,7 +169,7 @@ class EncryptionSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
         text = data["text"]
-        key = data["key"]
+        key = data.get("key", None)
         is_encryption = data["is_encryption"]
         algorithm = data["algorithm"]
         try:
@@ -182,7 +182,7 @@ class EncryptionSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         algorithm = self.context.get("request").data["algorithm"]
         text = self.context.get("request").data["text"]
-        key = self.context.get("request").data["key"]
+        key = self.context.get("request").data.get("key", None)
         is_encryption = self.context.get("request").data["is_encryption"]
 
         encrypted_text = self.encryption_service.get_algorithm(

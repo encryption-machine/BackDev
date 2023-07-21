@@ -33,10 +33,12 @@ def validate_caesar(text, key, is_encryption):
     if len(text) > 2000:
         raise ValidationError('Слишком большой текст')
     for char in text:
-        if char not in list_value_caesar:
+        if char.lower() not in list_value_caesar:
             raise ValidationError(f'Вы ввели недопустимый символ {char}')
     if text == '':
         raise ValidationError('Вы не ввели ни одного символа.')
+    if not key:
+        raise ValidationError('Необходимо ввести ключ')
     if key.isdigit() is False:
         raise ValidationError(f'{key} не является числом.')
     if int(key) > 15:
@@ -78,6 +80,8 @@ def validate_vigenere(text, key, is_encryption):
             raise ValidationError('Слишком большой текст')
     if text == '':
         raise ValidationError('Вы не ввели ни одного символа.')
+    if not key:
+        raise ValidationError('Необходимо ввести ключ')
     if len(key) > 30:
         raise ValidationError('Слишком длинный ключ')
     for char in key:
@@ -97,6 +101,8 @@ def validate_aes(text, key, is_encryption):
             raise ValidationError('Слишком большой текст')
     if text == '':
         raise ValidationError('Вы не ввели ни одного символа.')
+    if not key:
+        raise ValidationError('Необходимо ввести ключ')
     if len(key) > 30:
         raise ValidationError('Слишком длинный ключ')
     if key == '':
