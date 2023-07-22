@@ -107,8 +107,9 @@ def validate_aes(text, key, is_encryption):
         raise ValidationError('Слишком длинный ключ')
     if key == '':
         raise ValidationError('Вы не ввели ни одного символа.')
-    try:
-        decrypt(text, key)
-    except ValueError:
-        raise ValidationError(
-            'Некорректно закодированный текст, невозможно расшифровать.')
+    if not is_encryption:
+        try:
+            decrypt(text, key)
+        except ValueError:
+            raise ValidationError(
+                'Некорректно закодированный текст, невозможно расшифровать.')
