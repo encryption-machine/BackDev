@@ -10,9 +10,6 @@ from aiogram import Bot, Dispatcher, executor, types
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.dispatcher import FSMContext
 from aiogram.types import InlineKeyboardButton
-# from encryption.validators import (validate_aes, validate_caesar,
-#                                    validate_morse, validate_qr,
-#                                    validate_vigenere)
 
 logging.basicConfig(level=logging.INFO)
 
