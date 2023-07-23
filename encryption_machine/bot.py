@@ -1,14 +1,15 @@
 import base64
 import logging
 
-from encryption.utils import aes, caesar_code, morse_code, qr_code, vigenere
-from tg_bot import qr_bot
 from aiogram import Bot, Dispatcher, executor, types
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.dispatcher import FSMContext
 from aiogram.types import InlineKeyboardButton
-from encryption.validators import (validate_aes, validate_caesar, validate_morse,
-                         validate_qr, validate_vigenere)
+from encryption.utils import aes, caesar_code, morse_code, qr_code, vigenere
+from encryption.validators import (validate_aes, validate_caesar,
+                                   validate_morse, validate_qr,
+                                   validate_vigenere)
+from tg_bot import qr_bot
 
 logging.basicConfig(level=logging.INFO)
 
@@ -79,7 +80,7 @@ async def choose_mode(callback_query: types.CallbackQuery, state: FSMContext):
 
     # Сохранение выбранного режима в состоянии пользователя
     await state.update_data(mode=mode)
-    
+
     await callback_query.message.answer(f"Вы выбрали режим {choise}")
     await callback_query.message.answer("Введите текст для обработки:")
     await callback_query.message.edit_reply_markup(reply_markup=None)
