@@ -1,3 +1,4 @@
+import base64
 import logging
 
 import aes
@@ -9,6 +10,9 @@ from aiogram import Bot, Dispatcher, executor, types
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.dispatcher import FSMContext
 from aiogram.types import InlineKeyboardButton
+# from encryption.validators import (validate_aes, validate_caesar,
+#                                    validate_morse, validate_qr,
+#                                    validate_vigenere)
 
 logging.basicConfig(level=logging.INFO)
 
@@ -94,9 +98,21 @@ async def process_text(message: types.Message, state: FSMContext):
     cipher = data.get("cipher")
     mode = data.get("mode")
 
-    # Получение функции шифрования или дешифрования
-    # из словаря и вызов функции
-    if cipher == "Азбука Морзе":
+    if cipher == "QR-Code":
+        try:
+            cipher_function = cipher_functions.get(cipher)
+            result = cipher_function(text)
+            photo_bytes = base64.b64decode(result)
+            await message.reply_photo(photo_bytes)
+            await state.finish()
+            await message.answer("Для нового шифрования нажмите /start")
+        except Exception:
+            await state.finish()
+            await message.answer(
+                "Бот упал. Ауч. Для нового шифрования нажмите /start"
+            )
+
+    elif cipher == "Азбука Морзе":
         try:
             cipher_functions_dict = cipher_functions.get(cipher)
             cipher_function = cipher_functions_dict.get(mode)
