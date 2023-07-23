@@ -24,6 +24,10 @@ jobs:
     - name: Test with flake8 and django tests
       run: |
         python -m flake8
+    - name: deploy_tg_bot
+      run: |
+        cd encryption_machine/encryption/utils
+        python bot.py
   build_and_push_to_docker_hub:
     name: Push Docker image to Docker Hub
     runs-on: ubuntu-latest
