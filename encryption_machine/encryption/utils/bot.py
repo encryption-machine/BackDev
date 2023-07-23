@@ -1,10 +1,8 @@
 import logging
-
 from aiogram import Bot, Dispatcher, executor, types
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.dispatcher import FSMContext
-from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
-
+from aiogram.types import InlineKeyboardButton
 import aes
 import caesar_code
 import morse_code
@@ -26,7 +24,10 @@ cipher_functions = {
         "encrypt": caesar_code.encryption_mixin,
         "decrypt": caesar_code.encryption_mixin,
     },
-    "Азбука Морзе": {"encrypt": morse_code.encode, "decrypt": morse_code.decode},
+    "Азбука Морзе": {
+        "encrypt": morse_code.encode,
+        "decrypt": morse_code.decode
+    },
     "QR-Code": qr_code.qr_code_generation,
     "Виженер": {"encrypt": vigenere.encode, "decrypt": vigenere.decode},
     "AES": {"encrypt": aes.encrypt, "decrypt": aes.decrypt},
@@ -102,9 +103,11 @@ async def process_text(message: types.Message, state: FSMContext):
             await message.reply(result)
             await state.finish()
             await message.answer("Для нового шифрования нажмите /start")
-        except:
+        except Exception:
             await state.finish()
-            await message.answer("Бот упал. Ауч. Для нового шифрования нажмите /start")
+            await message.answer(
+                "Бот упал. Ауч. Для нового шифрования нажмите /start"
+            )
     else:
         await state.set_state("input_key")
         await message.reply("Введите ключ")
@@ -137,9 +140,11 @@ async def input_key(message: types.Message, state: FSMContext):
             await message.reply(result)
             await state.finish()
             await message.answer("Для нового шифрования нажмите /start")
-        except:
+        except Exception:
             await state.finish()
-            await message.answer("Бот упал. Ауч. Для нового шифрования нажмите /start")
+            await message.answer(
+                "Бот упал. Ауч. Для нового шифрования нажмите /start"
+            )
     else:
         try:
             cipher_functions_dict = cipher_functions.get(cipher)
@@ -148,9 +153,11 @@ async def input_key(message: types.Message, state: FSMContext):
             await message.reply(result)
             await state.finish()
             await message.answer("Для нового шифрования нажмите /start")
-        except:
+        except Exception:
             await state.finish()
-            await message.answer("Бот упал. Ауч. Для нового шифрования нажмите /start")
+            await message.answer(
+                "Бот упал. Ауч. Для нового шифрования нажмите /start"
+            )
 
 
 if __name__ == "__main__":
