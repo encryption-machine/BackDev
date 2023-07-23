@@ -49,7 +49,6 @@ INSTALLED_APPS = [
     "users",
     "encryption",
     "api",
-    "tg_bot",
 ]
 
 MIDDLEWARE = [
