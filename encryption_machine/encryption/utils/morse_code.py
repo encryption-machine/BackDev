@@ -81,7 +81,6 @@ def encode(text):
 def decode(text):
     encoded_words = text.split("  ")
     return " ".join(["".join(
-            [MORSE_DICT_REVERSED.get(i, i) for i in word.split()]).lower()
-            for word in encoded_words
-        ]
+        [MORSE_DICT_REVERSED.get(i, i) for i in word.split()]).lower()
+        for word in encoded_words]
     )
