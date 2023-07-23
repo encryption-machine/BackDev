@@ -85,7 +85,7 @@ def validate_vigenere(text, key, is_encryption):
     if len(key) > 30:
         raise ValidationError('Слишком длинный ключ')
     for char in key:
-        if key not in list_key_vigenere:
+        if char not in list_key_vigenere:
             raise ValidationError(f'Вы ввели недопустимый символ {char}')
     if key == '':
         raise ValidationError('Вы не ввели ни одного символа.')

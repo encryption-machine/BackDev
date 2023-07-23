@@ -1,15 +1,14 @@
 import base64
 import logging
 
-import aes
-import caesar_code
-import morse_code
-import qr_code
-import vigenere
+from encryption.utils import aes, caesar_code, morse_code, qr_code, vigenere
+from tg_bot import qr_bot
 from aiogram import Bot, Dispatcher, executor, types
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.dispatcher import FSMContext
 from aiogram.types import InlineKeyboardButton
+from encryption.validators import (validate_aes, validate_caesar, validate_morse,
+                         validate_qr, validate_vigenere)
 
 logging.basicConfig(level=logging.INFO)
 
@@ -76,12 +75,16 @@ async def choose_cipher(message: types.Message, state: FSMContext):
 @dp.callback_query_handler(lambda c: c.data in ["encrypt", "decrypt"])
 async def choose_mode(callback_query: types.CallbackQuery, state: FSMContext):
     mode = callback_query.data
+    choise = 'Шифрование' if mode == 'encypt' else 'Дешифрование'
 
     # Сохранение выбранного режима в состоянии пользователя
     await state.update_data(mode=mode)
-
-    await callback_query.message.reply("Введите текст для обработки:")
+    
+    await callback_query.message.answer(f"Вы выбрали режим {choise}")
+    await callback_query.message.answer("Введите текст для обработки:")
+    await callback_query.message.edit_reply_markup(reply_markup=None)
     await state.set_state("input_text")
+
 
 
 # Обработчик ввода текста
@@ -94,33 +97,40 @@ async def process_text(message: types.Message, state: FSMContext):
     data = await state.get_data()
     cipher = data.get("cipher")
     mode = data.get("mode")
+    if mode == "decrypt":
+        is_encryption = False
+    else:
+        is_encryption = True
+
 
     if cipher == "QR-Code":
         try:
+            validate_qr(text, key=None, is_encryption=is_encryption)
             cipher_function = cipher_functions.get(cipher)
             result = cipher_function(text)
             photo_bytes = base64.b64decode(result)
             await message.reply_photo(photo_bytes)
             await state.finish()
             await message.answer("Для нового шифрования нажмите /start")
-        except Exception:
+        except Exception as error:
             await state.finish()
             await message.answer(
-                "Бот упал. Ауч. Для нового шифрования нажмите /start"
+                f"Что-то пошло не так. {error} Для нового шифрования нажмите /start"
             )
 
     elif cipher == "Азбука Морзе":
         try:
+            validate_morse(text, key=None, is_encryption=is_encryption)
             cipher_functions_dict = cipher_functions.get(cipher)
             cipher_function = cipher_functions_dict.get(mode)
             result = cipher_function(text)
             await message.reply(result)
             await state.finish()
             await message.answer("Для нового шифрования нажмите /start")
-        except Exception:
+        except Exception as error:
             await state.finish()
             await message.answer(
-                "Бот упал. Ауч. Для нового шифрования нажмите /start"
+                f"{error} Для нового шифрования нажмите /start"
             )
     else:
         await state.set_state("input_key")
@@ -137,16 +147,17 @@ async def input_key(message: types.Message, state: FSMContext):
     cipher = data.get("cipher")
     mode = data.get("mode")
     text = data.get("text")
+    if data.get("mode") == "encrypt":
+        is_encryption = True
+    else:
+        is_encryption = False
 
     # Получение функции шифрования или дешифрования
     # из словаря и вызов функции с текстом и ключом
 
     if cipher == "Цезарь":
-        if data.get("mode") == "encrypt":
-            is_encryption = True
-        else:
-            is_encryption = False
         try:
+            validate_caesar(text=text, key=key, is_encryption=is_encryption)
             cipher_functions_dict = cipher_functions.get(cipher)
             cipher_function = cipher_functions_dict.get(mode)
             key = int(key)
@@ -154,23 +165,27 @@ async def input_key(message: types.Message, state: FSMContext):
             await message.reply(result)
             await state.finish()
             await message.answer("Для нового шифрования нажмите /start")
-        except Exception:
+        except Exception as error:
             await state.finish()
             await message.answer(
-                "Бот упал. Ауч. Для нового шифрования нажмите /start"
+                f"{error} Для нового шифрования нажмите /start"
             )
     else:
         try:
+            if cipher == 'AES':
+                validate_aes(text=text, key=key, is_encryption=is_encryption)
+            if cipher == 'Виженер':
+                validate_vigenere(text=text, key=key, is_encryption=is_encryption)
             cipher_functions_dict = cipher_functions.get(cipher)
             cipher_function = cipher_functions_dict.get(mode)
             result = cipher_function(text, key)
             await message.reply(result)
             await state.finish()
             await message.answer("Для нового шифрования нажмите /start")
-        except Exception:
+        except Exception as error:
             await state.finish()
             await message.answer(
-                "Бот упал. Ауч. Для нового шифрования нажмите /start"
+                f"{error} Для нового шифрования нажмите /start"
             )
 
 
