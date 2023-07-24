@@ -47,12 +47,14 @@ def vigenere_codec(text: str, key: str, codec: int = 1):
     # соответствующее коду соответствующей буквы ключа.
     i = 0
     for letter in text.upper():
-        if zero_letter < ord(letter) < zero_letter + alphabet_length:
-            result += chr(
-                (ord(new_key[i]) * codec - 1 + ord(letter) - 2 * zero_letter)
-                % alphabet_length
-                + zero_letter
+        if zero_letter < ord(letter) <= zero_letter + alphabet_length:
+            letter_code_key = ord(new_key[i]) - zero_letter - 1
+            letter_code_old = ord(letter) - zero_letter - 1
+            letter_code_new = (
+                (letter_code_old + codec * letter_code_key) % alphabet_length
             )
+            result += chr(letter_code_new + zero_letter + 1)
+
             i = i + 1 if i < len(new_key) - 1 else 0
         else:
             result += letter
