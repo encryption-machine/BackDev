@@ -40,7 +40,7 @@ def vigenere_codec(text: str, key: str, codec: int = 1):
     # Очищаем ключ от символов, не принадлежащих алфавиту
     new_key = ""
     for letter in key:
-        if zero_letter < ord(letter) < zero_letter + alphabet_length:
+        if zero_letter < ord(letter) <= zero_letter + alphabet_length:
             new_key += letter
 
     # Шифрование предполагает сдвиг кода буквы на число,
