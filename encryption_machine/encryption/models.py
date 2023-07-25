@@ -8,7 +8,7 @@ class Encryption(models.Model):
     user = models.ForeignKey(
         User, null=True, on_delete=models.SET_NULL, related_name="encryptions"
     )
-    text = models.TextField(max_length=2000)
+    text = models.TextField(max_length=15000)
     algorithm = models.CharField(max_length=100)
     key = models.CharField(max_length=100, null=True)
     date = models.DateTimeField(auto_now_add=True)
