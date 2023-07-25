@@ -1,8 +1,8 @@
+from django.urls import reverse
+from encryption.models import Encryption
 from rest_framework import status
 from rest_framework.test import APITestCase
-from django.urls import reverse
 from users.models import User
-from encryption.models import Encryption
 
 
 class EncryptionTest(APITestCase):
@@ -24,10 +24,9 @@ class EncryptionTest(APITestCase):
             "algorithm": "morse",
             "key": "string",
             "is_encryption": True,
-
         }
-
         response = self.client.post(self.url, data, format="json")
+
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(Encryption.objects.count(), 0)
 
@@ -38,10 +37,9 @@ class EncryptionTest(APITestCase):
             "algorithm": "invalid_algorithms",
             "key": "string",
             "is_encryption": True,
-
         }
-
         response = self.client.post(self.url, data, format="json")
+
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn('algorithm', response.data)
         self.assertEqual(
@@ -56,9 +54,9 @@ class EncryptionTest(APITestCase):
             "algorithm": "caesar",
             "key": "2a",
             "is_encryption": True,
-
         }
         response = self.client.post(self.url, data, format="json")
+
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_encryption_with_invalid_user(self):
@@ -68,9 +66,9 @@ class EncryptionTest(APITestCase):
             "algorithm": "morse",
             "key": "valid_key",
             "is_encryption": True,
-
         }
         self.client.force_authenticate(EncryptionTest.user)
         response = self.client.post(self.url, data, format="json")
+
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(Encryption.objects.count(), 1)
