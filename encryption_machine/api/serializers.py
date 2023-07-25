@@ -156,10 +156,17 @@ class EncryptionSerializer(serializers.ModelSerializer):
     """Сериалайзер для вывода результата шфирования"""
 
     encryption_service = EncryptionService()
+    key = serializers.CharField(required=False)
 
     class Meta:
         model = Encryption
         fields = ("id", "text", "algorithm", "key", "is_encryption")
+
+    def to_internal_value(self, data):
+        if data.get('algorithm') in ('morse', 'qr'):
+            if data.get('key') is not None:
+                data.pop('key')
+        return super(EncryptionSerializer, self).to_internal_value(data)
 
     def validate_algorithm(self, value):
         if value not in ("aes", "caesar", "morse", "qr", "vigenere"):

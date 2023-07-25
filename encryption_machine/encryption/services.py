@@ -36,7 +36,7 @@ class EncryptionService:
         return vigenere.decode(text, key)
 
     def get_algorithm(self, algorithm, text, key, is_encryption):
-        encription_dict = {
+        encryption_dict = {
             "aes": self.encrypt_aes,
             "caesar": self.encrypt_caesar,
             "morse": self.encrypt_morse,
@@ -52,7 +52,7 @@ class EncryptionService:
         }
 
         if is_encryption:
-            return encription_dict[algorithm](text, key)
+            return encryption_dict[algorithm](text, key)
         else:
             return decription_dict[algorithm](text, key)
 
