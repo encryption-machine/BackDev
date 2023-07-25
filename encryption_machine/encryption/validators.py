@@ -25,15 +25,10 @@ list_value_morse = ['а', 'б', 'в', 'г', 'д', 'е', 'ж', 'з', 'и', 'й', 
                     '>', '#', '%', '*'
                     ]
 
-list_key_vigenere = ['а', 'б', 'в', 'г', 'д', 'е', 'ж', 'з', 'и', 'й', 'к',
-                     'л', 'м', 'н', 'о', 'п', 'р', 'с', 'т', 'у', 'ф', 'х',
-                     'ц', 'ч', 'ш', 'щ', 'ъ', 'ы', 'ь', 'э', 'ю', 'я'
-                     ]
-
-list_value_vigenere = ['а', 'б', 'в', 'г', 'д', 'е', 'ж', 'з', 'и', 'й', 'к',
-                       'л', 'м', 'н', 'о', 'п', 'р', 'с', 'т', 'у', 'ф', 'х',
-                       'ц', 'ч', 'ш', 'щ', 'ъ', 'ы', 'ь', 'э', 'ю', 'я', ' '
-                       ]
+list_vigenere = ['а', 'б', 'в', 'г', 'д', 'е', 'ж', 'з', 'и', 'й', 'к',
+                 'л', 'м', 'н', 'о', 'п', 'р', 'с', 'т', 'у', 'ф', 'х',
+                 'ц', 'ч', 'ш', 'щ', 'ъ', 'ы', 'ь', 'э', 'ю', 'я', ' '
+                 ]
 
 
 def validate_caesar(text, key, is_encryption):
@@ -88,10 +83,10 @@ def validate_vigenere(text, key, is_encryption):
     if len(key) > MAX_KEY_LEN:
         raise ValidationError('Слишком длинный ключ')
     for char in text:
-        if char.lower() not in list_value_vigenere:
+        if char.lower() not in list_vigenere:
             raise ValidationError(f'Вы ввели недопустимый символ {char}')
     for char in key:
-        if char.lower() not in list_key_vigenere:
+        if char.lower() not in list_vigenere:
             raise ValidationError(
                 f'Недопустимый символ {char}. Ключ должен быть словом')
     if key == '':
