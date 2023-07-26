@@ -11,7 +11,8 @@ ignore =
     F401,
     R504,
     E402,
-    N400
+    N400,
+    I003
 
 per-file-ignores =
     # line too long (82 > 79 characters)
