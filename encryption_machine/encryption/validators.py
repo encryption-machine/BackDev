@@ -34,7 +34,9 @@ list_vigenere = ['а', 'б', 'в', 'г', 'д', 'е', 'ж', 'з', 'и', 'й', 'к
 def validate_caesar(text, key, is_encryption):
     '''Валидация шифра Цезаря '''
     if len(text) > ENCRYPTION_TEXT_LEN:
-        raise ValidationError('Слишком большой текст')
+        raise ValidationError(
+            f'Текст должен быть не более {ENCRYPTION_TEXT_LEN} символов.'
+        )
     for char in text:
         if char.lower() not in list_value_caesar:
             raise ValidationError(f'Вы ввели недопустимый символ {char}')
@@ -43,17 +45,22 @@ def validate_caesar(text, key, is_encryption):
     if key.isdigit() is False:
         raise ValidationError(f'{key} не является числом.')
     if int(key) > CAESAR_MAXIMUM_KEY:
-        raise ValidationError('Слишком большой ключ')
+        raise ValidationError(
+            f'Ключ должен быть не больше {CAESAR_MAXIMUM_KEY}.')
 
 
 def validate_morse(text, key, is_encryption):
     '''Валидация кода Морзе'''
     if is_encryption:
         if len(text) > ENCRYPTION_TEXT_LEN:
-            raise ValidationError('Слишком большой текст')
+            raise ValidationError(
+                f'Текст должен быть не более {ENCRYPTION_TEXT_LEN} символов.'
+            )
     else:
         if len(text) > DECRYPTION_TEXT_LEN:
-            raise ValidationError('Слишком большой текст')
+            raise ValidationError(
+                f'Текст должен быть не более {DECRYPTION_TEXT_LEN} символов.'
+            )
     if text == '':
         raise ValidationError('Вы не ввели ни одного символа.')
 
@@ -63,25 +70,27 @@ def validate_qr(text, key, is_encryption):
     if not is_encryption:
         raise ValidationError('Доступно только шифрование')
     if len(text) > MAX_QR_TEXT_LEN:
-        raise ValidationError('Слишком большой текст')
+        raise ValidationError(
+            f'Текст должен быть не более {MAX_QR_TEXT_LEN} символов.'
+        )
     if text == '':
         raise ValidationError('Вы не ввели ни одного символа.')
 
 
 def validate_vigenere(text, key, is_encryption):
     """"Валидация шифра Виженера."""
-    if is_encryption:
-        if len(text) > ENCRYPTION_TEXT_LEN:
-            raise ValidationError('Слишком большой текст')
-    else:
-        if len(text) > DECRYPTION_TEXT_LEN:
-            raise ValidationError('Слишком большой текст')
+    if len(text) > ENCRYPTION_TEXT_LEN:
+        raise ValidationError(
+            f'Текст должен быть не более {ENCRYPTION_TEXT_LEN} символов.'
+        )
     if text == '':
         raise ValidationError('Вы не ввели ни одного символа.')
     if not key:
         raise ValidationError('Необходимо ввести ключ')
     if len(key) > MAX_KEY_LEN:
-        raise ValidationError('Слишком длинный ключ')
+        raise ValidationError(
+            f'Ключ должен быть не более {MAX_KEY_LEN} символов.'
+        )
     for char in text:
         if char.lower() not in list_vigenere:
             raise ValidationError(f'Вы ввели недопустимый символ {char}')
@@ -97,16 +106,22 @@ def validate_aes(text, key, is_encryption):
     """"Валидация шифра AES."""
     if is_encryption:
         if len(text) > ENCRYPTION_TEXT_LEN:
-            raise ValidationError('Слишком большой текст')
+            raise ValidationError(
+                f'Текст должен быть не более {ENCRYPTION_TEXT_LEN} символов.'
+            )
     else:
         if len(text) > DECRYPTION_TEXT_LEN:
-            raise ValidationError('Слишком большой текст')
+            raise ValidationError(
+                f'Текст должен быть не более {DECRYPTION_TEXT_LEN} символов.'
+            )
     if text == '':
         raise ValidationError('Вы не ввели ни одного символа.')
     if not key:
         raise ValidationError('Необходимо ввести ключ')
     if len(key) > MAX_KEY_LEN:
-        raise ValidationError('Слишком длинный ключ')
+        raise ValidationError(
+            f'Ключ должен быть не более {MAX_KEY_LEN} символов.'
+        )
     if key == '':
         raise ValidationError('Вы не ввели ни одного символа.')
     if not is_encryption:
