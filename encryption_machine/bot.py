@@ -1,3 +1,4 @@
+import os
 import base64
 import logging
 
@@ -12,8 +13,11 @@ from encryption.validators import (validate_aes, validate_caesar,
 
 logging.basicConfig(level=logging.INFO)
 
+from dotenv import load_dotenv
 
-API_TOKEN = "6390553725:AAEAXrhGHklm4_EfYI3HL0tdKxIJjdzShdI"
+load_dotenv()
+
+API_TOKEN = os.getenv('API_TOKEN')
 
 bot = Bot(token=API_TOKEN)
 storage = MemoryStorage()
