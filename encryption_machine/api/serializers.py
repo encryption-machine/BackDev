@@ -24,7 +24,7 @@ class CustomJWTCreateSerializer(TokenObtainPairSerializer):
     Переопределяет текст ответа при ошибке."""
 
     default_error_messages = {
-        "no_active_account": "Такой пользователь не зарегистирован"
+        "no_active_account": "Неправильное имя пользователя или пароль"
     }
 
 
