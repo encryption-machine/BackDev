@@ -188,8 +188,8 @@ class EncryptionSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         algorithm = self.context.get("request").data["algorithm"]
-        text = self.context.get("request").data["text"]
-        key = self.context.get("request").data.get("key", None)
+        text = str(self.context.get("request").data["text"])
+        key = str(self.context.get("request").data.get("key", None))
         is_encryption = self.context.get("request").data["is_encryption"]
 
         encrypted_text = self.encryption_service.get_algorithm(
