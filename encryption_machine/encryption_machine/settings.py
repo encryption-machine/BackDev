@@ -179,7 +179,7 @@ DJOSER = {
     "PASSWORD_RESET_CONFIRM_RETYPE": True,
     "PASSWORD_RESET_CONFIRM_URL": "#/api/v1/users/password/reset/{uid}/{token}",
     "PERMISSIONS": {
-        "user": ["rest_framework.permissions.IsAdminUser"],
+        "user": ["rest_framework.permissions.IsAuthenticated"],
         "user_list": ["rest_framework.permissions.IsAdminUser"],
         "activation": ["rest_framework.permissions.IsAdminUser"],
         "set_password": ["rest_framework.permissions.IsAdminUser"],
