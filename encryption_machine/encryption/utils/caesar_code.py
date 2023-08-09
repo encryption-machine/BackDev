@@ -1,4 +1,5 @@
 def encryption_mixin(text, key, is_encryption):
+    key = int(key)
     final_string = ""
     for symbol in text:
         if symbol.isupper():

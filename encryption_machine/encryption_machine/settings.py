@@ -14,6 +14,11 @@ import os
 from datetime import timedelta
 from pathlib import Path
 
+from dotenv import load_dotenv
+
+load_dotenv()
+
+
 from django.core.management.utils import get_random_secret_key
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -24,8 +29,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-# SECRET_KEY = 'django-insecure-v5wnldpxhh-r1hkka$t7l2gg+ktft)w)l==c7_vxi+5(fd+xw)'
-SECRET_KEY = os.getenv("DJANGO_KEY", get_random_secret_key())
+SECRET_KEY = os.getenv('SECRET_KEY')
+# SECRET_KEY = os.getenv("DJANGO_KEY", get_random_secret_key())
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -90,8 +95,8 @@ WSGI_APPLICATION = "encryption_machine.wsgi.application"
 DATABASES = {
     'default': {
         'ENGINE': os.getenv('DB_ENGINE', 'django.db.backends.postgresql'),
-        'NAME': os.getenv('DB_NAME'),
-        'USER': os.getenv('POSTGRES_USER'),
+        'NAME': os.getenv('DB_NAME', 'postgres'),
+        'USER': os.getenv('POSTGRES_USER', 'postgres'),
         'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
         'HOST': os.getenv('DB_HOST'),
         'PORT': os.getenv('DB_PORT')
@@ -166,12 +171,15 @@ SIMPLE_JWT = {
 }
 
 DJOSER = {
+    'SERIALIZERS': {
+        'user_create_password_retype': 'api.serializers.UserCreateSerializer',
+    },
     "LOGIN_FIELD": "email",
     "USER_CREATE_PASSWORD_RETYPE": True,
     "PASSWORD_RESET_CONFIRM_RETYPE": True,
     "PASSWORD_RESET_CONFIRM_URL": "#/api/v1/users/password/reset/{uid}/{token}",
     "PERMISSIONS": {
-        "user": ["rest_framework.permissions.IsAdminUser"],
+        "user": ["rest_framework.permissions.IsAuthenticated"],
         "user_list": ["rest_framework.permissions.IsAdminUser"],
         "activation": ["rest_framework.permissions.IsAdminUser"],
         "set_password": ["rest_framework.permissions.IsAdminUser"],

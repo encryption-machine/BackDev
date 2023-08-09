@@ -8,7 +8,9 @@ app_name = "api"
 
 v1_router = DefaultRouter()
 v1_router.register(
-    "users/me/encryptions", EncryptionListViewSet, basename="encryption-list"
+    "users/me/encryptions",
+    EncryptionListViewSet,
+    basename="encryption_history"
 )
 v1_router.register("encryption", EncryptionViewSet, basename="encryption")
 
