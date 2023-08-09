@@ -1,6 +1,4 @@
 <div align='center'>
-  <img src='./src/assets/icons/logoicon.svg'/>
-
   <br>
 
   <h1>Шифровальная машина</h1>
@@ -23,8 +21,6 @@
 - UX/UI дизайнеров ([макет дизайна](https://www.figma.com/file/sXoX6dcw6Z1RoAZCmAe6BA/%D0%A8%D0%B8%D1%84%D1%80%D0%BE%D0%B2%D0%B0%D0%BB%D1%8C%D0%BD%D0%B0%D1%8F-%D0%BC%D0%B0%D1%88%D0%B8%D0%BD%D0%B0-(%D0%94%D0%B8%D0%B7%D0%B0%D0%B9%D0%BD)?type=design&node-id=7-5365&mode=design&t=7Oe5wcxCmfiithct-0))
 - Project менеджеров
 - QA инженеров
-
-![screenshot](./src/assets/images/screenshot.png)
 
 ## Стэк:
 - Python
@@ -49,6 +45,8 @@
 <a href="https://github.com/encryption-machine/Back/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=encryption-machine/Back" />
 </a>
+
+
 
 
 # Для разработчиков:
